@@ -15,23 +15,98 @@ wrong label is not graded.
 
 **Issue link**
 
-[The individual Path Review issue page. A link to the repository or the issue list
-does not satisfy this field.]
+https://github.com/codepath/pathreview-ai301-fa26-s1/issues/60
 
 **Verdict output**
 
-[Your skill's live-mode output for this issue, pasted verbatim and ending with the
-fenced JSON verdict block. A summary does not satisfy this field.]
+~~~~
+issue-select live mode on 3 Path Review candidates
+(scope: codepath/pathreview-ai301-fa26-s1; Path Review house rule: classmate claim comments do not block)
 
-**The verdict must record `accept` for this issue.** Choose an issue your own skill
-accepts. If your skill rejects every candidate you try, that is a signal about your
-rubric rather than about the issues: revise it and re-run — retries are unlimited and a
-partial re-run costs about $0.20 — or run the skill on different candidates. Output
-recording `reject` for the issue you chose earns no credit for this field.
+Ranked accepts (fit order):
+1. #60 Faithfulness checker crashes when a context chunk has text: None
+   fit: tier-1 RAG bug with a one-line repro; matches Python/RAG preference and a week-sized fix
+2. #53 PII scrubber fails to redact parenthesized US phone numbers
+   fit: clear safety regex bug; slightly less central to the RAG work I want next
+3. #62 Health check references settings.redis_host, which does not exist on Settings
+   fit: bounded API config bug; less interesting than the faithfulness path
 
+Rejected: none among these three (all required checks passed under the Path Review house rule).
+
+--- #60 ---
+not-archived: pass — archived: no
+recent-default-branch-activity: pass — 2026-09-16 commit on main within 180 days of today
+repo-still-shipping: pass — last push 2026-09-16; no releases published, push clause carries liveness
+scope-is-one-shippable-change: pass — single TypeError in FaithfulnessChecker.check when chunk text is None; named failing test path
+not-actively-claimed: pass — assignees none; no open linked PRs; no claim comments on this issue (house rule would ignore classmate claims anyway)
+ai-contribution-allowed: pass — docs/CONTRIBUTING.md states no AI ban (silence)
+newcomer-signposted: pass — labels include good first issue; tier-1
+verdict: accept
+
+--- #53 ---
+not-archived: pass — archived: no
+recent-default-branch-activity: pass — recent main commits within 180 days
+repo-still-shipping: pass — last push within 180 days
+scope-is-one-shippable-change: pass — extend phone regex for parenthesized US format; named scrub/detect behavior
+not-actively-claimed: pass — assignees none; no open linked PRs; no claim comments
+ai-contribution-allowed: pass — no AI ban in contribution docs
+newcomer-signposted: pass — good first issue; tier-1; safety
+verdict: accept
+
+--- #62 ---
+not-archived: pass — archived: no
+recent-default-branch-activity: pass — recent main commits within 180 days
+repo-still-shipping: pass — last push within 180 days
+scope-is-one-shippable-change: pass — health Redis probe should use settings.redis_url instead of missing redis_host/port
+not-actively-claimed: pass — assignees none; no open linked PRs; no claim comments
+ai-contribution-allowed: pass — no AI ban in contribution docs
+newcomer-signposted: pass — good first issue; tier-1; api
+verdict: accept
+
+```json
+[
+  {
+    "item": "https://github.com/codepath/pathreview-ai301-fa26-s1/issues/60",
+    "checks": [
+      {"name": "not-archived", "grade": "pass", "evidence": "archived: no"},
+      {"name": "recent-default-branch-activity", "grade": "pass", "evidence": "2026-09-16 default-branch commit within 180 days"},
+      {"name": "repo-still-shipping", "grade": "pass", "evidence": "last push 2026-09-16; releases none published"},
+      {"name": "scope-is-one-shippable-change", "grade": "pass", "evidence": "single TypeError when chunk text is None; clear repro"},
+      {"name": "not-actively-claimed", "grade": "pass", "evidence": "assignees none; no open linked PRs; no claim comments"},
+      {"name": "ai-contribution-allowed", "grade": "pass", "evidence": "CONTRIBUTING.md: no AI ban (silence)"},
+      {"name": "newcomer-signposted", "grade": "pass", "evidence": "good first issue, rag, tier-1"}
+    ],
+    "verdict": "accept"
+  },
+  {
+    "item": "https://github.com/codepath/pathreview-ai301-fa26-s1/issues/53",
+    "checks": [
+      {"name": "not-archived", "grade": "pass", "evidence": "archived: no"},
+      {"name": "recent-default-branch-activity", "grade": "pass", "evidence": "recent main commits within 180 days"},
+      {"name": "repo-still-shipping", "grade": "pass", "evidence": "last push within 180 days"},
+      {"name": "scope-is-one-shippable-change", "grade": "pass", "evidence": "extend phone regex for (555) 123-4567"},
+      {"name": "not-actively-claimed", "grade": "pass", "evidence": "assignees none; no open linked PRs"},
+      {"name": "ai-contribution-allowed", "grade": "pass", "evidence": "CONTRIBUTING.md: no AI ban"},
+      {"name": "newcomer-signposted", "grade": "pass", "evidence": "good first issue, safety, tier-1"}
+    ],
+    "verdict": "accept"
+  },
+  {
+    "item": "https://github.com/codepath/pathreview-ai301-fa26-s1/issues/62",
+    "checks": [
+      {"name": "not-archived", "grade": "pass", "evidence": "archived: no"},
+      {"name": "recent-default-branch-activity", "grade": "pass", "evidence": "recent main commits within 180 days"},
+      {"name": "repo-still-shipping", "grade": "pass", "evidence": "last push within 180 days"},
+      {"name": "scope-is-one-shippable-change", "grade": "pass", "evidence": "use settings.redis_url in health Redis probe"},
+      {"name": "not-actively-claimed", "grade": "pass", "evidence": "assignees none; no open linked PRs"},
+      {"name": "ai-contribution-allowed", "grade": "pass", "evidence": "CONTRIBUTING.md: no AI ban"},
+      {"name": "newcomer-signposted", "grade": "pass", "evidence": "good first issue, api, tier-1"}
+    ],
+    "verdict": "accept"
+  }
+]
 ```
-paste the output here, including the closing JSON block
-```
+~~~~
 
 ---
 
@@ -41,44 +116,35 @@ Quote source text directly in each field below. Paraphrase does not satisfy them
 
 **Run history**
 
-[The agreement score of each run you did, in order. A single run is a complete answer if
-only one run occurred. **The last score in your list must match the agreement line in the
-`eval-run.txt` you committed** — that file is the record of your final run.]
+1. Full run against the filled rubric in `~/.claude/skills/issue-select/rubric.md`: agreement **20/20** scored items (bar: 18/20: PASS); categories claimed 4/4, clear-accept 8/8, dead-repo 3/3, policy 1/1, scope 4/4. That run is the transcript committed as `eval-run.txt` (header agreement line: `agreement: 20/20 scored items  (bar: 18/20: PASS)`).
 
 **Issue analysis**
 
-[One scored issue, identified by id (`issue-01` through `issue-20`; the `calib-`
-issues are not scored). State your rubric's decision, the gold label, and the
-reasoning that produced your rubric's result.]
+`issue-12` (bookwyrm-social/bookwyrm#1133). Gold label: **reject**. My rubric: **reject**. Every liveness, shipping, scope, and claim check passed — recent commits, recent release, bounded UI enhancement, unclaimed — but `ai-contribution-allowed` failed on the contribution-policy line: *"We do not accept AI-generated code or documentation."* That required fail forces reject under the verdict rule, which matches the gold `policy` category.
 
 **Check rationale**
 
-[One check from the `rubric.md` uploaded to `tools/issue-select/`, quoted as it is
-currently written, with the reasoning behind its current form.]
+From uploaded `tools/issue-select/rubric.md`:
+
+> `| ai-contribution-allowed | The "contribution policy" line in repo facts (including any Generative AI / AI use section quoted there, and any AI_POLICY / AGENTS.md note). | The policy does not ban AI-generated or AI-assisted contributions outright. An explicit ban fails. Disclosure, "understand and test what you submit", and human-review requirements **pass** — those are terms to follow, not walls. Silence passes: most repos state nothing, and nothing is not a restriction. "Strongly discourage" language that still allows human-reviewed AI assistance also passes. | required |`
+
+I wrote it this way because the course contribution workflow is AI-assisted, so an outright ban is a hard dead end even when the issue looks perfect. Conditions (disclose / understand / test) stay as pass so repos like conda and zulip are not rejected for having a policy at all.
 
 **Trade-offs**
 
-[What the quoted check gives up. Any one of these is a complete answer: an issue whose
-result it changes, a canary you re-ran with `--only`, a case you accept it will miss, or a
-stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
-the point in full when the reason follows.]
+This check rejects `issue-12` even though it would otherwise be a strong first issue. It deliberately does **not** fail tldr-pages style "strongly discourages generative AI … without human review" language (`issue-10` still rejects on scope as a megaissue, not on policy). I accept that a repo with a soft cultural vibe against AI but no written ban will still pass — silence and soft discouragement are not the same as a ban, and the evidence guide says silence passes.
 
 ---
 
 ## Selection rationale
 
-Graded on whether all three are answered, in your own words. Not on how good the
-reasoning is, and not on length — a short honest answer to each earns the full marks.
-This is also the basis for the claim comment you write in Unit 2.
-
 **Selection rationale**
 
-[Answer all three:
+1. **Fit / time:** `#60` is a tier-1 RAG bug with a one-line Python repro (`FaithfulnessChecker().check(..., [{'text': None}])`). It matches the RAG work I already know and looks like a same-week fix: guard `None` text, keep the join happy, drop any related xfail if present.
 
-1. The issue's fit to your interests and to the time available.
-2. What the verdict identified correctly, and what you weighed that the rubric could
-   not.
-3. The anticipated difficulty in claiming it.]
+2. **What the verdict got right / what I weighed:** The skill correctly accepted it on every required check (alive repo, bounded crash, unclaimed, AI policy silent). Separately I weighed that the failing path is in `rag/evaluator/` — closer to the systems I want to practice than the phone-regex (`#53`) or Redis URL (`#62`) alternatives, which also accepted.
+
+3. **Claim difficulty:** Nobody has commented or linked a PR on `#60` yet. Path Review expects a claim comment in Unit 2; I am not claiming here. Shared classroom issues are normal under the house rule, so the main risk is timing — another student may claim before I post in Unit 2.
 
 ---
 
