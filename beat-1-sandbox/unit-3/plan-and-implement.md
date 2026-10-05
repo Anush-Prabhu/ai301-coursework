@@ -15,17 +15,23 @@ label is not graded.
 
 **GitHub username**
 
-[Your GitHub username, exactly as it appears on your profile - no @, no
-profile URL. Your comment upstream is identified by this name, and it is
-the only thing that ties it to you. Several students may plan the same
-house issue, so this is what keeps their comments off your score and
-yours off theirs.]
+Anush-Prabhu
 
 **Plan comment**
 
-[Link to the comment where you posted your plan on the issue. Use the comment's own
-permalink. **Then paste the text of that comment underneath the link** — the pasted text is
-what this field is graded on, so copy across what you actually posted.]
+https://github.com/codepath/pathreview-ai301-fa26-s1/issues/60#issuecomment-5986389310
+
+~~~~
+Diagnosis from the Unit 2 repro: `chunk.get("text", "")` still returns `None` when the key is present, so `" ".join(...)` in `FaithfulnessChecker.check` raises `TypeError: sequence item 0: expected str instance, NoneType found`. Control with a real string scores fine.
+
+Plan: normalize with `(chunk.get("text") or "")` at that join in `rag/evaluator/faithfulness_checker.py` only. Not touching claim extraction or other scorers.
+
+Test: re-run `FaithfulnessChecker().check('Knows Python.', [{'text': None}])` and expect a float in `[0.0, 1.0]`; unlock `test_none_context_chunk_text`.
+
+Branch (on my fork): `fix/60-none-chunk-text`.
+
+Drafted with AI assistance (Cursor); I reviewed the diagnosis against my posted repro and will run the before/after myself.
+~~~~
 
 ---
 
@@ -33,15 +39,32 @@ what this field is graded on, so copy across what you actually posted.]
 
 **Branch**
 
-[The name of the branch you built the change on, exactly as it appears in your fork. The
-naming shape is a type prefix, then the issue number, then a short description. **The issue
-number in the branch name must be the number of the issue you claimed** — a name carrying
-any other number does not satisfy this field.]
+fix/60-none-chunk-text
 
 **Evidence**
 
-[Your Unit 2 reproduction steps re-run against the built change: the before, then the
-after. Paste both, including the commands you ran and their output.]
+Before (old join expression / pre-fix behavior):
+
+```
+>>> chunks=[{'text': None}]
+>>> ' '.join([chunk.get('text', '') for chunk in chunks])
+TypeError: sequence item 0: expected str instance, NoneType found
+```
+
+After (on branch `fix/60-none-chunk-text`, commit `b7bbf8a`):
+
+```
+$ set PYTHONPATH=.
+$ python -c "from rag.evaluator.faithfulness_checker import FaithfulnessChecker; print(repr(FaithfulnessChecker().check('Knows Python.', [{'text': None}]))); print(repr(FaithfulnessChecker().check('Knows Python.', [{'text': 'Knows Python well'}])))"
+0.0
+1.0
+
+$ python -m pytest tests/unit/test_faithfulness_checker.py::TestFaithfulnessChecker::test_none_context_chunk_text -q
+.                                                                        [100%]
+1 passed in 0.32s
+```
+
+Fork branch: https://github.com/Anush-Prabhu/pathreview-ai301-fa26-s1/tree/fix/60-none-chunk-text
 
 ## Eval iterations
 
@@ -50,28 +73,29 @@ fields.
 
 **Run history**
 
-[The agreement score of each run you did, in order. A single run is a complete answer if
-only one run occurred. **The last score in your list must match the agreement line in the
-`eval-run.txt` you committed** — that file is the record of your final run.]
+PENDING — Claude Code CLI not logged in on this machine (`claude auth status` → loggedIn false). After `claude login`, run from `ai301-unit3-starter/eval`:
+
+```
+python run_eval.py --rubric %USERPROFILE%\.claude\skills\plan-check\rubric.md --evidence %USERPROFILE%\.claude\skills\plan-check\references\evidence-guide.md --procedure %USERPROFILE%\.claude\skills\plan-check\procedure.md --save-run eval-run.txt
+```
+
+Then paste agreement scores here (last must match committed `eval-run.txt`).
 
 **Package analysis**
 
-[Pick one scored package (`pkg-01` through `pkg-20` — the four `calib-` packages are never
-scored). Name it by id, say what your rubric decided and what the gold label said, and
-explain why your rubric read it that way.]
+PENDING — fill after full eval (pick one of pkg-01..pkg-20, not calib).
 
 **Check rationale**
 
-[Quote one check from the `rubric.md` you uploaded to `tools/plan-check/`, exactly as it reads now.
-Then say why it reads that way — what you revised to get there, or what you rejected in
-favour of it.]
+Quoted from uploaded `tools/plan-check/rubric.md`:
+
+> `| \`diagnosis-grounded\` | The plan's stated cause / diagnosis, read side-by-side with the package's repro-evidence block (steps, artifact, and any control run that isolates the subject). | The diagnosis follows from what the repro evidence shows. Fail when the plan blames a component the package's own control already ruled out, ignores a control that isolates a different cause, or contradicts the pasted artifact. | required |`
+
+Why: the gold set's `wrong-cause` family (pkg-01, pkg-07, pkg-11, pkg-16, calib-03) all pass a polished wrong diagnosis unless the grader is forced to read the control/artifact first. This check is required so those packages reject.
 
 **Trade-offs**
 
-[Every check gives something up. Any one of these is a complete answer: a package whose
-result it changes, a canary you re-ran with `--only`, a case you accept it will miss, or a
-stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
-the point in full when the reason follows.]
+`diagnosis-grounded` will miss a plan whose diagnosis is wrong for reasons that never appear in the package (e.g. live-only knowledge). That is accepted: eval mode's world is the bundle. Loosening it to "sounds plausible" would flip wrong-cause packages to false accepts; canaries for that change are any agreeing `wrong-cause` row and calib-03.
 
 ---
 
