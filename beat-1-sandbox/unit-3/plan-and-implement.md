@@ -73,17 +73,24 @@ fields.
 
 **Run history**
 
-PENDING — Claude Code CLI not logged in on this machine (`claude auth status` → loggedIn false). After `claude login`, run from `ai301-unit3-starter/eval`:
-
-```
-python run_eval.py --rubric %USERPROFILE%\.claude\skills\plan-check\rubric.md --evidence %USERPROFILE%\.claude\skills\plan-check\references\evidence-guide.md --procedure %USERPROFILE%\.claude\skills\plan-check\procedure.md --save-run eval-run.txt
-```
-
-Then paste agreement scores here (last must match committed `eval-run.txt`).
+1. Full run against `tools/plan-check/` rubric + evidence-guide + procedure + SKILL: **20/20** scored items, category floor met (`clear-accept 7/7`, `scope-creep 4/4`, `thread-convention 2/2`, `unbuildable 3/3`, `wrong-cause 4/4`), bar PASS. Matches committed `beat-1-sandbox/unit-3/eval-run.txt` (`agreement: 20/20 scored items  (bar: 18/20: PASS)`).
 
 **Package analysis**
 
-PENDING — fill after full eval (pick one of pkg-01..pkg-20, not calib).
+Package: `pkg-01` (category `wrong-cause`, source httpie/cli#1838).
+
+- Gold verdict: `reject`
+- Skill verdict: `reject` (agree)
+
+Repro control (quoted from the package):
+
+> Control run, same venv, same items, no `-v` flag: … prints `header1: xyz` / `{"x": "1"}` … `--debug` … error is raised by argparse's `parse_args` while consuming positionals; the request items are never handed to HTTPie's item parser.
+
+Plan diagnosis (quoted):
+
+> The `REQUEST_ITEM` tokenizer in `httpie/cli/requestitems.py` is the problem. … The Python-version difference is a red herring; the tokenizer has always been too strict about colon items.
+
+Deciding check: `diagnosis-grounded` → `fail`. The control already shows the same request items parse when `-v` is absent, and `--debug` pins argparse before the item parser runs, so blaming the tokenizer contradicts the package's own evidence. Required fail → verdict `reject`.
 
 **Check rationale**
 
