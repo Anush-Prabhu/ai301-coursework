@@ -26,23 +26,25 @@ https://github.com/codepath/pathreview-ai301-fa26-s1/pull/154
 
 **Run history**
 
-1. Full run: **19/20** (bar 18/20: PASS) — saved as `eval-run.txt` (model sonnet, 2026-10-12T06:41:01Z). Only disagreement: `pkg-04` (gold reject / rubric accept).
+1. Full run: **19/20** — disagreed on `pkg-04` (gold reject / rubric accept).
+2. Partial `--only pkg-04,pkg-02,pkg-10,pkg-07` after tightening `decisive-test`: **4/4**.
+3. Full run: **20/20** (bar 18/20: PASS) — saved as `eval-run.txt` (model sonnet, 2026-10-12T06:51:18Z).
 
 **Package analysis**
 
-`pkg-04` (sharkdp/bat#3833, category `not-tested`). Gold label: **reject**. My rubric: **accept**. Gold note: evidence is "tested locally, colors work now, cargo test passes" without the plan's paged before/after under pwsh. My `decisive-test` check still passed because the package's test-evidence section narrates a Windows pager color fix and cargo test; I did not require the exact `bat Cargo.toml` paging repro transcript. That is looser than the gold bar on this package. I am leaving the check as-is for now because the full run already clears 18/20 and every category has at least one match; tightening further risks flipping clear-accept canaries.
+`pkg-04` (sharkdp/bat#3833, category `not-tested`). Gold label: **reject**. After the revise: my rubric **reject** (agree). The plan's decisive check is re-running `bat Cargo.toml` under pwsh with less-Windows and seeing colored paged output. The package only says "Tested locally… colors work now. `cargo test` passes" — no pasted repro transcript. That is vibes + suite, not the plan's end-to-end repro, so `decisive-test` fails and the package rejects.
 
 **Check rationale**
 
 Quoted from uploaded `tools/pr-precheck/rubric.md`:
 
-> `| decisive-test | Candidate PR test-evidence section read against the plan's named test plan / repro steps; also any claim that repo checks were run. | Evidence shows an observable before/after (or after-only with the expected outcome named) for the plan's decisive failing case, not vibes ("works on my machine"), not "tests pass" alone, and not a control/unrelated path that never exercised the bug. Fail when the plan's named repro is never re-run, when evidence only covers the unchanged path, or when required suite/check outcomes the plan named are absent with no note. | required |`
+> `| decisive-test | Candidate PR test-evidence section read against the plan's named test plan / repro steps; also any claim that repo checks were run. | Evidence pastes an observable run of the plan's named decisive repro (command or equivalent transcript) with a stated outcome (before/after or after-with-expected). Fail on vibes ("tested locally", "colors work now", "works on my machine"), on "tests pass" / suite-only with no pasted repro, on a control/unrelated path that never exercised the bug, or when the plan's named repro is never shown. A unit test for a helper is not enough when the plan's decisive check is an end-to-end repro. | required |`
 
-Why it reads this way: the not-tested gold family is exactly "plan's decisive case never shown." I wrote the pass condition around before/after (or named expected-after) of that case, and explicitly fail control-only / suite-only evidence. `pkg-04` exposed that narrative claims of "colors work" can still slip through without a pasted paging transcript — a known looseness I accept for this submission rather than loosening other checks.
+Why it reads this way: the first full run accepted `pkg-04` because narrative "colors work" looked like an after-outcome. I revised the pass condition to require a pasted repro of the plan's named case, and to say helper unit tests / suite-only do not replace that. That matches the not-tested gold family without loosening plan-fidelity or diff-reviewable.
 
 **Trade-offs**
 
-`pkg-04` is the canary for that looseness: gold rejects, I accepted. I did not re-run `--only pkg-04` with a tighter wording because the full run already passed the bar and category floor, and a late tighten without a canary re-grade of a clear-accept (`pkg-02`) would risk an unpaid surprise fail. Cost of the trade-off: one not-tested disagreement; benefit: stable 19/20 full run on the first complete harness pass.
+Tightening `decisive-test` for `pkg-04` could have flipped a clear-accept that only shows suite output. I re-ran `--only pkg-04,pkg-02,pkg-10,pkg-07` as canaries (clear-accept + other not-tested rejects) before the confirming full 20/20 run. Nothing else flipped.
 
 ---
 

@@ -8,7 +8,7 @@
 ## Test evidence (harness category: not-tested)
 
 - **Where it lives (eval):** Plan context test plan + `### Test evidence`. Live: `plan.md` test plan vs `test_evidence.md` (and any pasted suite output).
-- **What good looks like:** Observable before/after (or after with named expected outcome) for the plan's decisive failing case. "Tests pass", "works on my machine", or re-running only the control/unrelated path is not decisive.
+- **What good looks like:** A pasted run of the plan's named decisive repro (command/transcript) with before/after or after-with-expected. "Tests pass", "tested locally", "colors work now", "works on my machine", or only a control/unrelated path is not decisive. Helper unit tests do not replace an end-to-end repro the plan named.
 
 ## Diff quality (harness category: unreviewable)
 
