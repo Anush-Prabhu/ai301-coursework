@@ -16,10 +16,7 @@ content placed under the wrong label is not graded.
 
 **Pull request**
 
-[PENDING — open after GitHub login as Anush-Prabhu]
-Compare URL to create it:
-https://github.com/codepath/pathreview-ai301-fa26-s1/compare/main...Anush-Prabhu:fix/60-none-chunk-text?expand=1
-Use title + body from local `pr_draft.md` on the Path Review fork.
+https://github.com/codepath/pathreview-ai301-fa26-s1/pull/154
 
 **Branch**
 
