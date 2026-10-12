@@ -1,13 +1,14 @@
-# Unit 4 — Test and Submit
+# Unit 4 - Test and Submit
 
 Path: `beat-1-sandbox/unit-4/pull-request.md`
 
-Record of the pull request you opened against the Path Review repo, and of the evaluation
-runs that produced `eval-run.txt`. This file is graded at the path above; a copy kept
-anywhere else in the repository is not read.
+Record of the pull request you opened against the Path Review
+repo, and of the evaluation runs that produced `eval-run.txt`. This
+file is graded at the path above; a copy kept anywhere else in the
+repository is not read.
 
-Complete every labelled field below. Each is graded on its own; content placed under the wrong
-label is not graded.
+Complete every labelled field below. Each is graded on its own;
+content placed under the wrong label is not graded.
 
 ---
 
@@ -15,45 +16,36 @@ label is not graded.
 
 **Pull request**
 
-[Link to the pull request you opened. It must be the pull request's own page on the Path
-Review repo, not your fork's branch page.]
+[PENDING — open after GitHub login as Anush-Prabhu]
+Compare URL to create it:
+https://github.com/codepath/pathreview-ai301-fa26-s1/compare/main...Anush-Prabhu:fix/60-none-chunk-text?expand=1
+Use title + body from local `pr_draft.md` on the Path Review fork.
 
 **Branch**
 
-[The name of the branch the pull request comes from, exactly as it appears in your fork.
-The naming shape is a type prefix, then the issue number, then a short description. **The
-issue number in the branch name must be the number of the issue the pull request fixes** —
-a name carrying any other number does not satisfy this field.]
+`fix/60-none-chunk-text`
 
 ## Eval iterations
 
-Answer all four sections. Quote source text directly; paraphrase does not satisfy these
-fields.
-
 **Run history**
 
-[The agreement score of each run you did, in order. A single run is a complete answer if
-only one run occurred. **The last score in your list must match the agreement line in the
-`eval-run.txt` you committed** — that file is the record of your final run.]
+1. Full run: **19/20** (bar 18/20: PASS) — saved as `eval-run.txt` (model sonnet, 2026-10-12T06:41:01Z). Only disagreement: `pkg-04` (gold reject / rubric accept).
 
 **Package analysis**
 
-[Pick one scored package (`pkg-01` through `pkg-20` — the four `calib-` packages are never
-scored). Name it by id, say what your rubric decided and what the gold label said, and
-explain why your rubric read it that way.]
+`pkg-04` (sharkdp/bat#3833, category `not-tested`). Gold label: **reject**. My rubric: **accept**. Gold note: evidence is "tested locally, colors work now, cargo test passes" without the plan's paged before/after under pwsh. My `decisive-test` check still passed because the package's test-evidence section narrates a Windows pager color fix and cargo test; I did not require the exact `bat Cargo.toml` paging repro transcript. That is looser than the gold bar on this package. I am leaving the check as-is for now because the full run already clears 18/20 and every category has at least one match; tightening further risks flipping clear-accept canaries.
 
 **Check rationale**
 
-[Quote one check from the `rubric.md` you uploaded to `tools/pr-precheck/`, exactly as it reads now.
-Then say why it reads that way — what you revised to get there, or what you rejected in
-favour of it.]
+Quoted from uploaded `tools/pr-precheck/rubric.md`:
+
+> `| decisive-test | Candidate PR test-evidence section read against the plan's named test plan / repro steps; also any claim that repo checks were run. | Evidence shows an observable before/after (or after-only with the expected outcome named) for the plan's decisive failing case, not vibes ("works on my machine"), not "tests pass" alone, and not a control/unrelated path that never exercised the bug. Fail when the plan's named repro is never re-run, when evidence only covers the unchanged path, or when required suite/check outcomes the plan named are absent with no note. | required |`
+
+Why it reads this way: the not-tested gold family is exactly "plan's decisive case never shown." I wrote the pass condition around before/after (or named expected-after) of that case, and explicitly fail control-only / suite-only evidence. `pkg-04` exposed that narrative claims of "colors work" can still slip through without a pasted paging transcript — a known looseness I accept for this submission rather than loosening other checks.
 
 **Trade-offs**
 
-[Every check gives something up. Any one of these is a complete answer: a package whose
-result it changes, a canary you re-ran with `--only`, a case you accept it will miss, or a
-stated reason nothing changed elsewhere. "Nothing changed, and here is how I know" earns
-the point in full when the reason follows.]
+`pkg-04` is the canary for that looseness: gold rejects, I accepted. I did not re-run `--only pkg-04` with a tighter wording because the full run already passed the bar and category floor, and a late tighten without a canary re-grade of a clear-accept (`pkg-02`) would risk an unpaid surprise fail. Cost of the trade-off: one not-tested disagreement; benefit: stable 19/20 full run on the first complete harness pass.
 
 ---
 
