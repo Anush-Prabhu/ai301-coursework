@@ -9,3 +9,5 @@ Graded those five against the Unit 1 rubric (no stars check added). Four accept,
 `area:frontend` on CrossGL/crosstl#2799 is the compiler front-end, not a React UI. Exact label match in the ranking filter kept it, which is what I want. Linked-PR false positives showed up on the CrossGL timeline (PRs #3059/#3076 do not close #2799); `not-actively-claimed` still needs the Development closing-ref / claim-comment read, not the raw timeline.
 
 Nothing else in `rubric.md` mis-graded a required check on this scan. Next week: Candidate Issues site picks get a direct grade; claim on GitHub only after that.
+
+2026-10-25 (unit 6). Replaced `scope-is-one-shippable-change` with `scope-feasible` and added the difficulty-note section. The old check treated any open edge as a reject; the new floor only rejects issues that are not one piece of work. Re-graded last week's four accepts: all still accept. Difficulty: Yawnalyzer straightforward; agent-bom and phantom moderate; crosstl ambitious (Mojo importer / `global_idx` mapping). Chose agent-bom#5956.

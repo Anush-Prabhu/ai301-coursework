@@ -165,3 +165,83 @@ Hand-fed URLs from the same survivor list, chosen for the pytest / ingestion sen
   }
 ]
 ```
+
+# Direct grades, 2026-10-25 (unit 6, after `scope-feasible`)
+
+Same four accepts from last week's scan, re-graded on current GitHub. All four still `accept`. Difficulty notes are live-only and not in the JSON.
+
+## Accepted (fit order)
+
+### 1. [koda-ai-studio/agent-bom#5956](https://github.com/koda-ai-studio/agent-bom/issues/5956) — **moderate**
+
+`_normalize_ocsf_event` still hard-codes `agent_name=""` and `session_id=""` in `src/agent_bom/api/observability_events.py` (lines 145–146 on current main). Location is named; several fields and two OCSF class fixtures remain. Unclaimed. **Chose this one.**
+
+### 2. [DepressionCenter/Yawnalyzer#14](https://github.com/DepressionCenter/Yawnalyzer/issues/14) — **straightforward**
+
+Named file and loop, suggested test row. 2 stars. Unclaimed.
+
+### 3. [hayagrivai-labs/phantom#82](https://github.com/hayagrivai-labs/phantom/issues/82) — **moderate**
+
+Two files (`equivalence.py`, `host.py`) plus a `--stdin` design choice. Repo is four days old. Unclaimed.
+
+### 4. [CrossGL/crosstl#2799](https://github.com/CrossGL/crosstl/issues/2799) — **ambitious**
+
+One importer lowering, but the edge is the unfamiliar Mojo/MAX `global_idx` mapping. Unclaimed.
+
+```json
+[
+  {
+    "item": "https://github.com/koda-ai-studio/agent-bom/issues/5956",
+    "checks": [
+      {"name": "not-archived", "grade": "pass", "evidence": "archived: no"},
+      {"name": "recent-default-branch-activity", "grade": "pass", "evidence": "2026-10-25 human commits by msaad00 on default branch"},
+      {"name": "repo-still-shipping", "grade": "pass", "evidence": "release v0.110.0 on 2026-10-22; last push 2026-10-25"},
+      {"name": "scope-feasible", "grade": "pass", "evidence": "one identifiable task: map actor/session/cloud/device in _normalize_ocsf_event; open fixture edge is a difficulty note"},
+      {"name": "not-actively-claimed", "grade": "pass", "evidence": "assignees none; comments none; no open PR referencing #5956"},
+      {"name": "ai-contribution-allowed", "grade": "pass", "evidence": "CONTRIBUTING.md: coding agents allowed; you are responsible for every line; AGENTS.md is agent instructions not a ban"},
+      {"name": "newcomer-signposted", "grade": "pass", "evidence": "labels include help wanted"}
+    ],
+    "verdict": "accept"
+  },
+  {
+    "item": "https://github.com/DepressionCenter/Yawnalyzer/issues/14",
+    "checks": [
+      {"name": "not-archived", "grade": "pass", "evidence": "archived: no"},
+      {"name": "recent-default-branch-activity", "grade": "pass", "evidence": "2026-09-02 human README commit by gabrielmongefranco"},
+      {"name": "repo-still-shipping", "grade": "pass", "evidence": "releases none published; last push 2026-09-02 within 180 days"},
+      {"name": "scope-feasible", "grade": "pass", "evidence": "one parser else-branch; named file and test row"},
+      {"name": "not-actively-claimed", "grade": "pass", "evidence": "assignees none; comments none; no linked PRs"},
+      {"name": "ai-contribution-allowed", "grade": "pass", "evidence": "no CONTRIBUTING.md / AI_POLICY.md / AGENTS.md; silence passes"},
+      {"name": "newcomer-signposted", "grade": "pass", "evidence": "labels include help wanted"}
+    ],
+    "verdict": "accept"
+  },
+  {
+    "item": "https://github.com/hayagrivai-labs/phantom/issues/82",
+    "checks": [
+      {"name": "not-archived", "grade": "pass", "evidence": "archived: no"},
+      {"name": "recent-default-branch-activity", "grade": "pass", "evidence": "2026-10-24 human PR merges"},
+      {"name": "repo-still-shipping", "grade": "pass", "evidence": "release v0.1.1 on 2026-10-21; last push 2026-10-24"},
+      {"name": "scope-feasible", "grade": "pass", "evidence": "one verify stdin-sharing bug; --stdin flag is an open edge, not an umbrella"},
+      {"name": "not-actively-claimed", "grade": "pass", "evidence": "assignees none; comments none; /take not used"},
+      {"name": "ai-contribution-allowed", "grade": "pass", "evidence": "CONTRIBUTING.md has no AI ban"},
+      {"name": "newcomer-signposted", "grade": "pass", "evidence": "labels include help wanted"}
+    ],
+    "verdict": "accept"
+  },
+  {
+    "item": "https://github.com/CrossGL/crosstl/issues/2799",
+    "checks": [
+      {"name": "not-archived", "grade": "pass", "evidence": "archived: no"},
+      {"name": "recent-default-branch-activity", "grade": "pass", "evidence": "2026-10-25 ninglinLiu merging human PRs"},
+      {"name": "repo-still-shipping", "grade": "pass", "evidence": "release v3.4.0 on 2026-10-23; last push 2026-10-25"},
+      {"name": "scope-feasible", "grade": "pass", "evidence": "one Mojo-importer lowering with a named repro; unfamiliar global_idx mapping is the difficulty note"},
+      {"name": "not-actively-claimed", "grade": "pass", "evidence": "assignees none; PRs #3059/#3076 do not close #2799"},
+      {"name": "ai-contribution-allowed", "grade": "pass", "evidence": "CONTRIBUTING.md has no AI ban; silence passes"},
+      {"name": "newcomer-signposted", "grade": "pass", "evidence": "labels include help wanted"}
+    ],
+    "verdict": "accept"
+  }
+]
+```
+

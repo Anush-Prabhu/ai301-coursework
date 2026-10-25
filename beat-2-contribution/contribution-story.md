@@ -1,4 +1,4 @@
-# Contribution: [Issue Title]
+# Contribution: OCSF ingest drops actor, session, cloud and device fields
 
 Path: `beat-2-contribution/contribution-story.md`
 
@@ -10,7 +10,7 @@ files and no evidence uploads are part of Assignment 5.
 **Contribution Number:** 1
 **Student:** Anush Prabhu
 **GitHub Username:** Anush-Prabhu
-**Issue:** [GitHub issue link]
+**Issue:** https://github.com/koda-ai-studio/agent-bom/issues/5956
 **Pull Request:** [GitHub PR link, once opened]
 
 One repository, built across units 5 to 8, telling the whole story of your real
@@ -58,11 +58,9 @@ one in the week it belongs to.
 
 I overlaid issue-scout on the Unit 1 skill (kept `rubric.md`) and wrote three `gh search issues` queries from the fit profile: Python `good first issue`, Python `help wanted`+`bug`, and Python `bug`+`pytest`, ranked by drop-assignee / drop-OWNER / fewest comments. The first Q3 (`RAG OR FastAPI OR ...` with `good first issue`) returned `[]`, and fewest-comments still put 0-comment persona cards in the top five; I rewrote Q3 to `--label bug pytest` and dropped results without a `bug` label. The second scan graded five issues: four accept (agent-bom#5956, Yawnalyzer#14, phantom#82, crosstl#2799) and one reject (repowise#4608, open PR #4625). I did not add a required stars check — gold `issue-06` is a 37-star clear-accept — so 2-star and 4-star repos still pass, which I logged in `scan-notes.md`.
 
-**Unit 6: [one line on the tool work]**
+**Unit 6: Installed the voice-guard, patched scope-feasible, claimed agent-bom#5956, wrote CLAUDE.local.md**
 
-[2-4 sentences: the voice-guard, the repo-memory file. What broke or
-fell short, and what changed because of it. "Nothing broke" counts when
-it is true - say how you know.]
+I installed the voice-guard (canonical guide at `~/.claude/voice-guard/voice-guide.md`, hook on PreToolUse) and replaced repro-check / plan-check scopes with the wild copies. `ln -s` is not available on this Windows box, so the filled guide is copied into each skill folder, and the hook uses `pythoncore-3.14-64\python.exe` because `python3` on PATH is a WindowsApps stub. The wiring test stopped `gh issue comment --help` with "no body the guard can read"; `check_voice.py --draft claim-draft.md` passed, then I posted the claim. `CLAUDE.local.md` is in the fork clone and listed in `.git/info/exclude` (`git status` does not show it).
 
 **Unit 7: [one line on the tool work]**
 
@@ -78,24 +76,18 @@ drafted, what you did with the draft.]
 
 ## Why I Chose This Issue
 
-[1-2 paragraphs in your own words: how you searched, what your scan
-surfaced, what your scout's verdict said, why this issue fits your
-profile, and what you hope to learn. If your scout's verdict on it
-was reject and you chose it anyway, say so here and say why; choosing
-against your own tool silently is what loses points. Close with an
-honest read of the tool itself: where the scout fell short on a real
-wild search and what you changed or would change, or what convinced
-you it held up. **Record the link to your claim comment in this section too.**
-Not claimed yet? Write `claim pending` and today's date where the link goes,
-and add the link the moment your claim lands.]
+Last week's scan accepted four Python bugs. On 2026-10-25 I replaced `scope-is-one-shippable-change` with `scope-feasible` and graded those four again. All four still accept. Difficulty: Yawnalyzer#14 straightforward, agent-bom#5956 and phantom#82 moderate, crosstl#2799 ambitious (Mojo `global_idx` mapping). I picked koda-ai-studio/agent-bom#5956: `_normalize_ocsf_event` drops actor, session, cloud, and device on OCSF ingest. It is one Python API function with a named file, `help wanted`, no assignee and no comments, and it sits on the API / safety side of my profile. CONTRIBUTING.md allows coding agents if I own the lines and add a regression test. I hope to learn how this repo keeps ingest metadata bounded without losing identity fields.
+
+The scout was right that #5956 is one piece of work and still free. It was wrong last week to treat every open edge as a reject-shaped scope check — that is why I patched the row. It still cannot see star counts at search time, so 2-star and 4-star accepts stay in the shortlist; I left that as preferred-not-required because gold `issue-06` is 37 stars.
+
+Claim comment: https://github.com/koda-ai-studio/agent-bom/issues/5956#issuecomment-6399207854
 
 **Toolkit**
 
-- Tool: issue-scout (your scout: your search strategy, your rubric),
-  and how you used it
-- What it produced: [the scan and its verdict on this issue, described]
-- Difficulties: [where it fell short, or "none met" if none did]
-- What changed: [what you patched or would update, or "nothing"]
+- Tool: issue-scout in direct grade mode on last week's four accepts, after the `scope-feasible` patch
+- What it produced: all four accept; #5956 moderate. I claimed #5956.
+- Difficulties: `scope-is-one-shippable-change` would have treated fixture lists and unnamed extra files as a fail; search still cannot see stars
+- What changed: 2026-10-25 replaced `scope-is-one-shippable-change` with `scope-feasible` and added the difficulty-note section. Open edges are now notes, not rejects.
 
 ---
 
@@ -130,31 +122,36 @@ and add the link the moment your claim lands.]
 
 **Environment Setup**
 
-[What a stranger would need to stand this up: your operating system,
-the relevant versions (language, runtime, package manager, the project
-itself), and how you set the project up. Then the challenges you faced
-and how you solved them, or that none came up.]
+Windows 11 (10.0.26300). Fork `Anush-Prabhu/agent-bom`, `main` at `43be104`. `uv` created a `.venv` with CPython 3.12.15; `uv sync --extra dev` installed the package and pytest. Host Python is 3.14.5; I ran the repro through the venv, not the host. First import of `agent_bom.api.observability_events` took about 30 seconds (FastAPI and the rest of the API package). No other setup fights.
 
 **Steps to Reproduce**
 
-1. [Step 1]
-2. [Step 2]
-3. [Observed result]
+1. From the clone at `43be104`, `uv sync --extra dev`.
+2. Run `.venv/Scripts/python.exe` importing `_normalize_ocsf_event` on an event with `actor.user.name`, `actor.session.uid`, `cloud.account.uid`, `device.hostname`, and `observables[0].trace_id`.
+3. Observed: `agent_name=''`, `session_id=''`, `trace_id='trace-abc'`. Returned keys have no actor/cloud/device.
 
 **Reproduction Evidence**
 
-- **Commit showing reproduction:** [link to commit in your fork]
-- **Screenshots/logs:** [if applicable]
-- **My findings:** [what you discovered during reproduction; an
-  honest, evidenced cannot-reproduce that led you to re-pick or ask
-  the maintainer belongs here and costs you nothing]
+- **Commit showing reproduction:** none
+- **Screenshots/logs:** at `43be104`:
+
+```
+agent_name= ''
+session_id= ''
+trace_id= 'trace-abc'
+keys= ['agent_name', 'detector', 'event_id', 'event_timestamp', 'event_type', 'message', 'ocsf_class_name', 'ocsf_class_uid', 'request_id', 'session_id', 'severity', 'source_id', 'tenant_id', 'tool_name', 'trace_id']
+```
+
+Lines 145–146 of `src/agent_bom/api/observability_events.py` are `"agent_name": ""` and `"session_id": ""`.
+
+- **My findings:** The normalizer on current main still drops actor/session/cloud/device. I did not call the HTTP ingest path, so I did not see the issue's `runtime-<uuid4>` session id; that is `_runtime_observation_from_event`, not this function. I am not posting this report on the issue.
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: repro-check rubric (wild scope) plus `check_voice.py --draft` on the claim; I held `claim-draft.md` and `repro-draft.md` against the claim-only then full-package checks
+- What it produced: claim passed voice-guard and `claim-is-specific` (named `_normalize_ocsf_event` and the file). Repro shows the empty agent/session on `43be104`.
+- Difficulties: the issue's uuid4 session is on the persist path; a normalizer-only run cannot show it
+- What changed: nothing in the tool. The report stays at the function the issue names; ingest can wait until I write a regression test.
 
 ---
 
