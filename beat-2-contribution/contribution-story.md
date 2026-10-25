@@ -7,10 +7,9 @@ the repository is not read. **Keep every section header below under its exact na
 format criteria grade exactly that. Your course repo link is the whole submission: no tool
 files and no evidence uploads are part of Assignment 5.
 
-**Contribution Number:** [1]
-**Student:** [Student name]
-**GitHub Username:** [your GitHub username, exactly as it appears on your profile - no @, no
-profile URL. Your comments upstream are identified by this name.]
+**Contribution Number:** 1
+**Student:** Anush Prabhu
+**GitHub Username:** Anush-Prabhu
 **Issue:** [GitHub issue link]
 **Pull Request:** [GitHub PR link, once opened]
 
@@ -55,10 +54,9 @@ happened; these entries are the toolkit's own timeline.
 All four entries are graded. Keep every heading below, and fill each
 one in the week it belongs to.
 
-**Unit 5: [one line on the tool work]**
+**Unit 5: Built issue-scout, rewrote the empty pytest query, and dropped OWNER-filed and non-bug hits after the first shortlist filled with practice repos**
 
-[2-4 sentences: what you built (the scout, your strategy), what broke
-or fell short, what changed because of it.]
+I overlaid issue-scout on the Unit 1 skill (kept `rubric.md`) and wrote three `gh search issues` queries from the fit profile: Python `good first issue`, Python `help wanted`+`bug`, and Python `bug`+`pytest`, ranked by drop-assignee / drop-OWNER / fewest comments. The first Q3 (`RAG OR FastAPI OR ...` with `good first issue`) returned `[]`, and fewest-comments still put 0-comment persona cards in the top five; I rewrote Q3 to `--label bug pytest` and dropped results without a `bug` label. The second scan graded five issues: four accept (agent-bom#5956, Yawnalyzer#14, phantom#82, crosstl#2799) and one reject (repowise#4608, open PR #4625). I did not add a required stars check — gold `issue-06` is a 37-star clear-accept — so 2-star and 4-star repos still pass, which I logged in `scan-notes.md`.
 
 **Unit 6: [one line on the tool work]**
 

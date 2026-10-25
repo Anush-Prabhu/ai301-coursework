@@ -10,10 +10,13 @@ https://github.com/Anush-Prabhu/ai301-coursework
 
 ## What lives where
 
-- `tools/`: my installed skill folders, one per unit in Beat 1. Unit 1 is
-  `issue-select/`, unit 2 `repro-check/`, unit 3 `plan-check/`, unit 4
-  `pr-precheck/`. For each unit I upload the current files from my
-  installed copy (`~/.claude/skills/<skill>/`).
+- `tools/`: my installed skill folders. Beat 1 is `issue-select/`,
+  `repro-check/`, `plan-check/`, `pr-precheck/`. Beat 2 starts with
+  `issue-scout/` (the Unit 5 overlay on issue-select). For each unit I
+  upload the current files from my installed copy
+  (`~/.claude/skills/<skill>/`). Graders for Assignment 5 read
+  `beat-2-contribution/contribution-story.md` only; the scout files
+  wait for the unit 9 portfolio.
 - `beat-1-sandbox/`: one folder per unit for units 1–4. Each holds that
   unit’s write-up (links, reflection, and my account of the eval
   iterations) and `eval-run.txt`, one complete eval run written by the
