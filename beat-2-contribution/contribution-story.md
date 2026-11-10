@@ -60,7 +60,7 @@ I overlaid issue-scout on the Unit 1 skill (kept `rubric.md`) and wrote three `g
 
 **Unit 6: Installed the voice-guard, patched scope-feasible, claimed agent-bom#5956, wrote CLAUDE.local.md**
 
-I installed the voice-guard (canonical guide at `~/.claude/voice-guard/voice-guide.md`, hook on PreToolUse) and replaced repro-check / plan-check scopes with the wild copies. `ln -s` is not available on this Windows box, so the filled guide is copied into each skill folder, and the hook uses `pythoncore-3.14-64\python.exe` because `python3` on PATH is a WindowsApps stub. The wiring test stopped `gh issue comment --help` with "no body the guard can read"; `check_voice.py --draft claim-draft.md` passed, then I posted the claim. `CLAUDE.local.md` is in the fork clone and listed in `.git/info/exclude` (`git status` does not show it).
+I installed the voice-guard (canonical guide at `~/.claude/voice-guard/voice-guide.md`, hook on PreToolUse) and replaced repro-check / plan-check scopes with the wild copies. `ln -s` is not available on this Windows box, so skill-folder guides are generated copies: edit only the canonical file, then run `refresh_voice_guides.ps1` (noted in `tools/VOICE_GUIDE.md`). The hook calls `run_hook.cmd`, which reads `VOICE_GUARD_PYTHON` instead of a hard-coded `pythoncore-3.14-64\python.exe` path. The wiring test stopped `gh issue comment --help` with "no body the guard can read"; `check_voice.py --draft claim-draft.md` passed, then I posted the claim. `CLAUDE.local.md` is in the fork clone and listed in `.git/info/exclude` (`git status` does not show it).
 
 **Unit 7: [one line on the tool work]**
 
@@ -95,26 +95,28 @@ Claim comment: https://github.com/koda-ai-studio/agent-bom/issues/5956#issuecomm
 
 **Problem Description**
 
-[In your own words, what is broken or missing?]
+On OCSF ingest, `_normalize_ocsf_event` never maps actor, session, cloud, or device into the normalized event. It hard-codes empty `agent_name` and `session_id`, and only pulls `trace_id` from `observables`. Identity and cloud/device context from a well-formed OCSF event are discarded before anything is stored.
 
 **Expected Behavior**
 
-[What should happen?]
+Actor name/session, cloud account/region, and device hostname should land in the normalized fields (and any bounded metadata the API already uses), with a session id that is stable for the same event so retries can match inventory.
 
 **Current Behavior**
 
-[What actually happens?]
+At `43be104`, the same event comes back with `agent_name=''`, `session_id=''`, and no actor/cloud/device keys. `trace_id` from `observables` is the only identity-ish field that survives. The issue's `runtime-<uuid4>` session shows up on the HTTP persist path (`_runtime_observation_from_event`), not inside this normalizer.
 
 **Affected Components**
 
-[Which parts of the codebase are involved?]
+- `src/agent_bom/api/observability_events.py` — `_normalize_ocsf_event` (empty `agent_name` / `session_id` assignments in that function)
+- Downstream: `_runtime_observation_from_event` / `_event_session_id` when the HTTP ingest path builds a runtime observation
+- Tests / fixtures for OCSF classes 2004 and 6003 (named in the issue acceptance criteria)
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: reading the issue thread plus `_normalize_ocsf_event` at pinned commit `43be104`, then the runnable script on `repro/5956-normalize-ocsf`
+- What it produced: a four-field write-up that separates the normalizer drop from the uuid4 session on the persist path
+- Difficulties: the issue narrates both symptoms together; a normalizer-only run cannot show the uuid4 session
+- What changed: nothing in the code yet; Understanding stays scoped to the function the issue names
 
 ---
 
@@ -126,14 +128,48 @@ Windows 11 (10.0.26300). Fork `Anush-Prabhu/agent-bom`, `main` at `43be104`. `uv
 
 **Steps to Reproduce**
 
-1. From the clone at `43be104`, `uv sync --extra dev`.
-2. Run `.venv/Scripts/python.exe` importing `_normalize_ocsf_event` on an event with `actor.user.name`, `actor.session.uid`, `cloud.account.uid`, `device.hostname`, and `observables[0].trace_id`.
+1. From the fork clone, check out commit `43be104` (or branch `repro/5956-normalize-ocsf`, which adds only the script below) and run `uv sync --extra dev`.
+2. Run the exact payload script (also committed on that branch):
+
+```
+.venv/Scripts/python.exe scripts/repro_5956_normalize_ocsf.py
+```
+
+The script passes this dict into `_normalize_ocsf_event(..., tenant_id="tenant-demo")`:
+
+```python
+EVENT = {
+    "class_name": "API Activity",
+    "class_uid": 6003,
+    "severity_id": 1,
+    "time": "2026-10-25T12:00:00.000Z",
+    "metadata": {
+        "uid": "meta-1",
+        "product": {"name": "test-product"},
+    },
+    "actor": {
+        "user": {"name": "alice"},
+        "session": {"uid": "sess-123"},
+    },
+    "cloud": {
+        "account": {"uid": "acct-9"},
+        "region": "us-east-1",
+    },
+    "device": {
+        "hostname": "dev-host-1",
+    },
+    "observables": [
+        {"trace_id": "trace-abc"},
+    ],
+}
+```
+
 3. Observed: `agent_name=''`, `session_id=''`, `trace_id='trace-abc'`. Returned keys have no actor/cloud/device.
 
 **Reproduction Evidence**
 
-- **Commit showing reproduction:** none
-- **Screenshots/logs:** at `43be104`:
+- **Commit showing reproduction:** branch `repro/5956-normalize-ocsf` on `Anush-Prabhu/agent-bom` (script only; behavior pinned to parent `43be104`)
+- **Screenshots/logs:** script output at `43be104`:
 
 ```
 agent_name= ''
@@ -142,16 +178,16 @@ trace_id= 'trace-abc'
 keys= ['agent_name', 'detector', 'event_id', 'event_timestamp', 'event_type', 'message', 'ocsf_class_name', 'ocsf_class_uid', 'request_id', 'session_id', 'severity', 'source_id', 'tenant_id', 'tool_name', 'trace_id']
 ```
 
-Lines 145–146 of `src/agent_bom/api/observability_events.py` are `"agent_name": ""` and `"session_id": ""`.
+In `_normalize_ocsf_event` at that SHA, `agent_name` and `session_id` are hard-coded empty strings: https://github.com/Anush-Prabhu/agent-bom/blob/43be104d174f9c6925ced68836253b4176d1e949/src/agent_bom/api/observability_events.py#L145-L146
 
 - **My findings:** The normalizer on current main still drops actor/session/cloud/device. I did not call the HTTP ingest path, so I did not see the issue's `runtime-<uuid4>` session id; that is `_runtime_observation_from_event`, not this function. I am not posting this report on the issue.
 
 **Toolkit**
 
-- Tool: repro-check rubric (wild scope) plus `check_voice.py --draft` on the claim; I held `claim-draft.md` and `repro-draft.md` against the claim-only then full-package checks
-- What it produced: claim passed voice-guard and `claim-is-specific` (named `_normalize_ocsf_event` and the file). Repro shows the empty agent/session on `43be104`.
-- Difficulties: the issue's uuid4 session is on the persist path; a normalizer-only run cannot show it
-- What changed: nothing in the tool. The report stays at the function the issue names; ingest can wait until I write a regression test.
+- Tool: repro-check rubric (wild scope) plus `check_voice.py --draft` on the claim; later a committed `scripts/repro_5956_normalize_ocsf.py` so the payload is not reconstructed from prose
+- What it produced: claim passed voice-guard and `claim-is-specific` (named `_normalize_ocsf_event` and the file). Repro shows the empty agent/session on `43be104` from the exact dict above.
+- Difficulties: the issue's uuid4 session is on the persist path; a normalizer-only run cannot show it. Prose-only step 2 forced readers to rebuild the event.
+- What changed: added the runnable script and SHA permalink; report still stays at the function the issue names.
 
 ---
 
