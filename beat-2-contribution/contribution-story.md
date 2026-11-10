@@ -168,7 +168,7 @@ EVENT = {
 
 **Reproduction Evidence**
 
-- **Commit showing reproduction:** branch `repro/5956-normalize-ocsf` on `Anush-Prabhu/agent-bom` (script only; behavior pinned to parent `43be104`)
+- **Commit showing reproduction:** https://github.com/Anush-Prabhu/agent-bom/commit/b238dc8 (branch `repro/5956-normalize-ocsf`; script only; behavior pinned to parent `43be104`)
 - **Screenshots/logs:** script output at `43be104`:
 
 ```
